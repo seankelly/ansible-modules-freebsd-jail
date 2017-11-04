@@ -1,0 +1,19 @@
+---
+dist: trusty
+sudo: false
+
+language: python
+version:
+  - "2.7"
+
+branches:
+  only:
+    - master
+
+install:
+  - pip install ansible pyparsing
+  - curl -O https://raw.githubusercontent.com/ansible/ansible/devel/test/runner/requirements/units.txt
+    && pip install -r units.txt
+
+script:
+  - pytest library/test_freebsd_jailconf.py
