@@ -1,7 +1,24 @@
 #!/usr/bin/env python2
 
+
+from __future__ import absolute_import, division, print_function
+
+
+DOCUMENTATION = '''
+'''
+
+
+EXAMPLES = '''
+'''
+
+
+RETURN = '''
+'''
+
 import textwrap
 import sys
+
+from ansible.module_utils.basic import AnsibleModule
 
 from pyparsing import Combine, Dict, Group, Literal, Word, ZeroOrMore, alphas, \
     alphanums, cppStyleComment, dblQuotedString, delimitedList, \
@@ -81,11 +98,11 @@ def main(args):
     for jail_file in (demo_jail(), ):
         #jail_conf = jail.parseFile(jail_file)
         jail_conf = jail.parseString(jail_file)
-        print "In:"
-        print jail_file
-        print "Out:"
-        print jail_conf
-        print jail_conf.asDict()
+        print("In:")
+        print(jail_file)
+        print("Out:")
+        print(jail_conf)
+        print(jail_conf.asDict())
 
 
 if __name__ == '__main__':
