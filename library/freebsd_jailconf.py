@@ -29,8 +29,9 @@ class FreeBsdJail(object):
 
     def __init__(self, module):
         self.conf_file = module.params['conf_file']
+        self.parser = self.jail_parser()
 
-    def parser(self):
+    def jail_parser(self):
         word = Word(alphanums)
         token = Word(alphanums + '-_.:')
         path = Word(alphanums + '-_.:/')
