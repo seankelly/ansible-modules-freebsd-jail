@@ -25,34 +25,6 @@ from pyparsing import Combine, Dict, Group, Literal, Word, ZeroOrMore, alphas, \
     pythonStyleComment, restOfLine, sglQuotedString
 
 
-def jail_parser():
-    word = Word(alphanums)
-    token = Word(alphanums + '-_.:')
-    path = Word(alphanums + '-_.:/')
-
-    end = Literal(';').suppress()
-
-    jail_name = delimitedList(Word(alphanums + '-.*'), delim='.', combine=True)
-
-    boolean_parameter = token + end
-    value = dblQuotedString | sglQuotedString | delimitedList(token) | path
-    parameter = token + (Literal('=') | Literal('+=')) + value + end
-
-    variable = Combine('$' + word) | Combine('$' + '{' + token + '}')
-    variable_definition = variable + '=' + (dblQuotedString | sglQuotedString | path) + end
-
-    jail_def = (
-        jail_name + Literal('{') +
-        ZeroOrMore(Group(boolean_parameter | parameter | variable_definition)) +
-        Literal('}')
-    )
-
-    jail = Dict(ZeroOrMore(Group(jail_def | boolean_parameter | parameter)))
-    jail.ignore(cppStyleComment)
-    jail.ignore(pythonStyleComment)
-    return jail
-
-
 def demo_jail():
     return textwrap.dedent("""\
         # Typical static defaults:
@@ -91,6 +63,39 @@ def demo_jail():
         }
     """)
 
+class FreeBsdJail(object):
+
+    def __init__(self, module):
+        self.conf_file = module.params['conf_file']
+
+    def parser(self):
+        word = Word(alphanums)
+        token = Word(alphanums + '-_.:')
+        path = Word(alphanums + '-_.:/')
+
+        end = Literal(';').suppress()
+
+        jail_name = delimitedList(Word(alphanums + '-.*'), delim='.', combine=True)
+
+        boolean_parameter = token + end
+        value = dblQuotedString | sglQuotedString | delimitedList(token) | path
+        parameter = token + (Literal('=') | Literal('+=')) + value + end
+
+        variable = Combine('$' + word) | Combine('$' + '{' + token + '}')
+        variable_definition = variable + '=' + (dblQuotedString | sglQuotedString | path) + end
+
+        jail_def = (
+            jail_name + Literal('{') +
+            ZeroOrMore(Group(boolean_parameter | parameter | variable_definition)) +
+            Literal('}')
+        )
+
+        jail = Dict(ZeroOrMore(Group(jail_def | boolean_parameter | parameter)))
+        jail.ignore(cppStyleComment)
+        jail.ignore(pythonStyleComment)
+        return jail
+
+
 def main():
 
     module_args = {
@@ -121,7 +126,7 @@ def main():
         supports_check_mode=False
     )
 
-    jail = jail_parser()
+    jail = FreeBsdJail(module)
 
     module.exit_json(**result)
 
