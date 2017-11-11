@@ -91,19 +91,40 @@ def demo_jail():
         }
     """)
 
-def main(args):
+def main():
+
+    module_args = {
+        'name': {
+            'required': True,
+            'type': 'str',
+        },
+        'conf_file': {
+            'default': '/etc/jail.conf',
+            'required': False,
+            'type': 'str',
+        },
+        'state': {
+            'choices': ['present', 'absent'],
+            'default': 'present',
+            'type': 'str',
+        },
+    }
+
+    result = dict(
+        changed=False,
+        original_message='',
+        message='',
+    )
+
+    module = AnsibleModule(
+        argument_spec=module_args,
+        supports_check_mode=False
+    )
 
     jail = jail_parser()
 
-    for jail_file in (demo_jail(), ):
-        #jail_conf = jail.parseFile(jail_file)
-        jail_conf = jail.parseString(jail_file)
-        print("In:")
-        print(jail_file)
-        print("Out:")
-        print(jail_conf)
-        print(jail_conf.asDict())
+    module.exit_json(**result)
 
 
 if __name__ == '__main__':
-    main(sys.argv)
+    main()
