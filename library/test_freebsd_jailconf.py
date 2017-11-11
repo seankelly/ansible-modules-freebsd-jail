@@ -2,7 +2,7 @@
 import json
 
 from ansible.compat.tests import unittest
-from ansible.compat.tests.mock import patch
+from ansible.compat.tests.mock import mock_open, patch
 from ansible.module_utils import basic
 from ansible.module_utils.six.moves import builtins
 from ansible.module_utils._text import to_bytes
@@ -77,16 +77,13 @@ class TestJailConf(unittest.TestCase):
     def setUp(self):
         self.module = freebsd_jailconf
 
-    def execute_module(self, failed=False, changed=False):
-        def open_file(file_path):
-            pass
-
+    def execute_module(self, failed=False, changed=False, jail_contents=b''):
         def run(method, func):
             with patch.object(basic.AnsibleModule, method, func):
                 result = self.module.main()
             return result
 
-        with patch.object(builtins, 'open', open_file):
+        with patch.object(builtins, 'open', mock_open(read_data=jail_contents)):
             if failed:
                 return run('fail_json', fail_json)
             else:
