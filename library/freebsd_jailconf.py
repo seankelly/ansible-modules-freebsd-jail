@@ -30,6 +30,7 @@ class FreeBsdJail(object):
     def __init__(self, module):
         self.conf_file = module.params['conf_file']
         self.parser = self.jail_parser()
+        self.jail = None
 
     def jail_parser(self):
         word = Word(alphanums)
@@ -57,6 +58,9 @@ class FreeBsdJail(object):
         jail.ignore(cppStyleComment)
         jail.ignore(pythonStyleComment)
         return jail
+
+    def load(self):
+        self.jail = self.parser.parseFile(self.conf_file, parseAll=True)
 
 
 def main():
@@ -90,6 +94,7 @@ def main():
     )
 
     jail = FreeBsdJail(module)
+    jail.load()
 
     module.exit_json(**result)
 
