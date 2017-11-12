@@ -15,6 +15,82 @@ EXAMPLES = '''
 RETURN = '''
 '''
 
+
+# These are the core parameters that are passed to the kernel.
+JAIL_CORE_PARAMETERS = (
+    'jid',
+    'name',
+    'path',
+    'ip4.addr',
+    'ip4.saddrsel',
+    'ip4',
+    'ip6.addr',
+    'ip6.saddrsel',
+    'ip6',
+    'vnet',
+    'host.hostname',
+    'host',
+    'securelevel',
+    'devfs_ruleset',
+    'children.max',
+    'children.cur',
+    'enforce_statfs',
+    'persist',
+    'osrelease',
+    'osreldate',
+    'allow.set_hostname',
+    'allow.sysvipc',
+    'allow.raw_sockets',
+    'allow.chflags',
+    'allow.mount',
+    'allow.mount.devfs',
+    'allow.mount.fdescfs',
+    'allow.mount.nullfs',
+    'allow.mount.procfs',
+    'allow.mount.linprocfs',
+    'allow.mount.linsysfs',
+    'allow.mount.tmpfs',
+    'allow.mount.zfs',
+    'allow.quotas',
+    'allow.socket_af',
+    'linux',
+    'linux.osname',
+    'linux.osrelease',
+    'linux.oss_version',
+    'sysvmsg',
+    'sysvsem',
+    'sysvshm',
+)
+
+# These parameters are only used by jail(8).
+JAIL_PSUEDO_PARAMETERS = (
+    'exec.prestart',
+    'exec.start',
+    'command',
+    'exec.poststart',
+    'exec.prestop',
+    'exec.stop',
+    'exec.poststop',
+    'exec.clean',
+    'exec.jail_user',
+    'exec.system_jail_user',
+    'exec.system_user',
+    'exec.timeout',
+    'exec.consolelog',
+    'exec.fib',
+    'stop.timeout',
+    'interface',
+    'vnet.interface',
+    'ip_hostname',
+    'mount',
+    'mount.fstab',
+    'mount.devfs',
+    'mount.fdescfs',
+    'mount.procfs',
+    'allow.dying',
+    'depend',
+)
+
 import textwrap
 import sys
 
