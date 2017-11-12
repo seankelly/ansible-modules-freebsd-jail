@@ -83,15 +83,16 @@ class TestJailConf(unittest.TestCase):
                 result = self.module.main()
             return result
 
-        with patch.object(builtins, 'open', mock_open(read_data=jail_contents)):
+        mocked_open = mock_open(read_data=jail_contents)
+        with patch.object(builtins, 'open', mocked_open):
             if failed:
-                return run('fail_json', fail_json)
+                return run('fail_json', fail_json), mocked_open
             else:
-                return run('exit_json', exit_json)
+                return run('exit_json', exit_json), mocked_open
 
     def test_simple_jail(self):
         set_module_args({
             'name': 'example',
             'state': 'present',
         })
-        result = self.execute_module()
+        result, mocked_open = self.execute_module()
