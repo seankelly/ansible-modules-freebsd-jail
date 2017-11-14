@@ -5,6 +5,24 @@ from __future__ import absolute_import, division, print_function
 
 
 DOCUMENTATION = '''
+---
+author:
+  - Sean Kelly
+module: freebsd_jailconf
+short_description: Configure FreeBSD's jail.conf
+requirements:
+  - This module requires pyparsing.
+options:
+  name:
+    description: Name of the jail. Use an empty string ('') to set global options.
+    required: True
+  conf_file:
+    description: Path to the jail.conf file.
+    default: /etc/jail.conf
+  state:
+    description: Create or delete a jail or option.
+    choices: ['present', 'absent']
+    default: present
 '''
 
 
