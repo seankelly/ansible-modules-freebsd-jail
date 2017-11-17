@@ -313,6 +313,7 @@ JAIL_PSUEDO_PARAMETERS = (
     },
 )
 
+from itertools import chain
 import textwrap
 import sys
 
@@ -375,6 +376,14 @@ def main():
             'type': 'str',
         },
     }
+
+    for parameter in chain(JAIL_CORE_PARAMETERS, JAIL_PSUEDO_PARAMETERS):
+        param_options = parameter.copy()
+        option_name = param_options['name']
+        del param_options['name']
+        if 'type' not in param_options:
+            param_options['type'] = 'str'
+        module_args[option_name] = param_options
 
     result = dict(
         changed=False,
