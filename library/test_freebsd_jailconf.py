@@ -10,28 +10,28 @@ from ansible.module_utils._text import to_bytes
 import freebsd_jailconf
 
 
-class AnsibleFail(Exception):
+class AnsibleExitJson(Exception):
     pass
 
 
-class AnsibleExit(Exception):
+class AnsibleFailJson(Exception):
     pass
+
+
+def exit_json(*args, **kwargs):
+    if 'changed' not in kwargs:
+        kwargs['changed'] = False
+    raise AnsibleExitJson(kwargs)
+
+
+def fail_json(*args, **kwargs):
+    kwargs['failed'] = True
+    raise AnsibleFailJson(kwargs)
 
 
 def set_module_args(args):
     args = json.dumps({'ANSIBLE_MODULE_ARGS': args})
     basic._ANSIBLE_ARGS = to_bytes(args)
-
-
-def exit_json(*args, **kwargs):
-    kwargs['failed'] = True
-    return kwargs
-
-
-def fail_json(*args, **kwargs):
-    if 'changed' not in kwargs:
-        kwargs['changed'] = False
-    return kwargs
 
 
 def demo_jail():
@@ -78,17 +78,28 @@ class TestJailConf(unittest.TestCase):
         self.module = freebsd_jailconf
 
     def execute_module(self, failed=False, changed=False, jail_contents=b''):
-        def run(method, func):
-            with patch.object(basic.AnsibleModule, method, func):
-                result = self.module.main()
-            return result
-
         mocked_open = mock_open(read_data=jail_contents)
         with patch.object(builtins, 'open', mocked_open):
             if failed:
-                return run('fail_json', fail_json), mocked_open
+                return self.failed(), mocked_open
             else:
-                return run('exit_json', exit_json), mocked_open
+                return self.changed(changed), mocked_open
+
+    def changed(self, changed=False):
+        with patch.object(basic.AnsibleModule, 'exit_json', exit_json):
+            with self.assertRaises(AnsibleExitJson) as exc:
+                self.module.main()
+        result = exc.exception.args[0]
+        self.assertEqual(result['changed'], changed, result)
+        return result
+
+    def failed(self):
+        with patch.object(basic.AnsibleModule, 'fail_json', fail_json):
+            with self.assertRaises(AnsibleFailJson) as exc:
+                self.module.main()
+        result = exc.exception.args[0]
+        self.assertTrue(result['failed'], result)
+        return result
 
     def test_simple_jail(self):
         set_module_args({
