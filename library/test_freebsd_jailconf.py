@@ -101,9 +101,9 @@ class TestJailConf(unittest.TestCase):
         self.assertTrue(result['failed'], result)
         return result
 
-    def test_simple_jail(self):
+    def test_path_required(self):
         set_module_args({
             'name': 'example',
             'state': 'present',
         })
-        result, mocked_open = self.execute_module()
+        result, mocked_open = self.execute_module(failed=True)
