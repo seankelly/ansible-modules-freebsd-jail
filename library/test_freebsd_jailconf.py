@@ -106,4 +106,4 @@ class TestJailConf(unittest.TestCase):
             'name': 'example',
             'state': 'present',
         })
-        result, mocked_open = self.execute_module(failed=True)
+        _, __ = self.execute_module(failed=True)
